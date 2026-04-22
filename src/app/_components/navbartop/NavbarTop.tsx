@@ -14,7 +14,8 @@ export default function NavbarTop() {
           <div className="flex items-center gap-8 text-gray-600">
             <span className="flex items-center gap-2">
               <FaTruck className="text-green-600 text-sm" />
-              <span className="text-[13px]">Free Shipping on Orders over 500 EGP</span>
+              <span className="text-[13px]">Free Shipping on Orders
+                +500 EGP</span>
             </span>
             <span className="flex items-center gap-2">
               <FaGift className="text-green-600 text-sm" />
