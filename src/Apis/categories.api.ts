@@ -19,13 +19,16 @@ export async function getCategories(): Promise<CategoryInterface[]> {
   }
 }
 
-export async function getCategoryDetails(id: string): Promise<CategoryInterface> {
+export async function getCategoryDetails(id: string): Promise<CategoryInterface | null> {
   try {
-    const res = await fetch(`https://ecommerce.routemisr.com/api/v1/categories/${id}`);
-    if (!res.ok) throw new Error("Failed to fetch category details");
+    const res = await fetch(`https://ecommerce.routemisr.com/api/v1/categories/${id}`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch category details: ${res.status}`);
     const payload = await res.json();
     return payload?.data;
   } catch (error) {
-    throw new Error("Failed to fetch category details");
+    console.error("Error fetching category details:", error);
+    return null;
   }
 }

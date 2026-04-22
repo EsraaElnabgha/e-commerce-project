@@ -8,8 +8,12 @@ export interface BrandInterface {
 export async function getBrands(): Promise<BrandInterface[]> {
   try {
     const [page1, page2] = await Promise.all([
-      fetch("https://ecommerce.routemisr.com/api/v1/brands?page=1"),
-      fetch("https://ecommerce.routemisr.com/api/v1/brands?page=2"),
+      fetch("https://ecommerce.routemisr.com/api/v1/brands?page=1", {
+        next: { revalidate: 3600 },
+      }),
+      fetch("https://ecommerce.routemisr.com/api/v1/brands?page=2", {
+        next: { revalidate: 3600 },
+      }),
     ]);
 
     if (!page1.ok || !page2.ok)
@@ -22,17 +26,21 @@ export async function getBrands(): Promise<BrandInterface[]> {
 
     return [...(data1?.data ?? []), ...(data2?.data ?? [])];
   } catch (error) {
-    throw new Error("Failed to fetch brands");
+    console.error("Error fetching brands:", error);
+    return [];
   }
 }
 
-export async function getBrandDetails(id: string): Promise<BrandInterface> {
+export async function getBrandDetails(id: string): Promise<BrandInterface | null> {
   try {
-    const res = await fetch(`https://ecommerce.routemisr.com/api/v1/brands/${id}`);
-    if (!res.ok) throw new Error("Failed to fetch brand details");
+    const res = await fetch(`https://ecommerce.routemisr.com/api/v1/brands/${id}`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch brand details: ${res.status}`);
     const payload = await res.json();
     return payload?.data;
   } catch (error) {
-    throw new Error("Failed to fetch brand details");
+    console.error("Error fetching brand details:", error);
+    return null;
   }
 }
